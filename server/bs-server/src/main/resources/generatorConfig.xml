@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="MySqlContext" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endDelimiter" value="`"/>
+
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+            <property name="addRemarkComments" value="false"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/book-sharing?serverTimezone=GMT%2B8&amp;characterEncoding=utf8"
+                        userId="root"
+                        password="root">
+        </jdbcConnection>
+
+        <!--报找不到路径错误时 修改work directory到当前项目-->
+        <!--java实体类文件-->
+        <javaModelGenerator targetPackage="com.angeya.bs.model"
+                            targetProject="src/main/java">
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!--映射xml文件-->
+        <sqlMapGenerator targetPackage="com.angeya.bs.mapper"
+                         targetProject="src/main/java"/>
+
+        <!--Dao接口文件-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.angeya.bs.mapper"
+                             targetProject="src/main/java"/>
+
+        <table tableName="user">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="file">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="operate_log">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+
+    </context>
+</generatorConfiguration>

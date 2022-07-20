@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.angeya.bs.mapper.UserMapper">
+
+  <resultMap id="BaseResultMap" type="com.angeya.bs.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+
+  <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.angeya.bs.model.User" useGeneratedKeys="true" keyProperty="id">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      `mail`,
+      `password`,
+      <if test="authority != null">
+        `authority`,
+      </if>
+      <if test="role != null">
+        `role`,
+      </if>
+      <if test="createDate != null">
+        `create_date`,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      #{mail,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR},
+      <if test="authority != null">
+        #{authrity,jdbcType=TINYINT},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=TINYINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate, jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateById" parameterType="com.angeya.bs.model.User">
+    update `user`
+    set mail = #{mail,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      comment = #{comment,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="selectById" parameterType="com.angeya.bs.model.User" resultType="com.angeya.bs.model.User">
+    select count(id) from `user`
+    where `mail` = #{mail, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByMailAndPwd" parameterType="com.angeya.bs.model.User" resultType="com.angeya.bs.model.User">
+    select * from `user`
+    where `mail` = #{mail, jdbcType=VARCHAR} and `password` = #{password, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectUserNumByMail" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(id) from `user`
+    where `mail` = #{mail, jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectStorageSpace" parameterType="java.lang.Integer" resultType="com.angeya.bs.model.StorageSpace">
+    select sum(b.size) / 1024 as used_space, u.space as total_space
+    from `user` u left join book b
+    on u.id = #{id, jdbcType=INTEGER} and b.user_id = u.id
+    group by total_space
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+      select * from `user`
+  </select>
+</mapper>

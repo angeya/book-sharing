@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.angeya.bs.mapper.BookMapper">
+  <resultMap id="BaseResultMap" type="com.angeya.bs.model.Book">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+  </resultMap>
+
+  <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from book
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.angeya.bs.model.Book" useGeneratedKeys="true" keyProperty="id">
+    insert into book
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      user_id,
+      path,
+      `size`,
+      classify,
+      label,
+      `desc`,
+      <if test="operability != null">
+        operability,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      #{userId,jdbcType=INTEGER},
+      #{path,jdbcType=VARCHAR},
+      #{size,jdbcType=BIGINT},
+      #{classify,jdbcType=VARCHAR},
+      #{label,jdbcType=VARCHAR},
+      #{desc,jdbcType=VARCHAR},
+      <if test="operability != null">
+        #{operability,jdbcType=TINYINT},
+      </if>
+      <if test="createDate != null">
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateById" parameterType="com.angeya.bs.model.Book">
+    update book
+    set user_id = #{userId,jdbcType=INTEGER},
+      path = #{path,jdbcType=VARCHAR},
+      operability = #{operability,jdbcType=TINYINT},
+      `date` = #{date,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select * from book where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectPathById" parameterType="java.lang.Integer" resultType="java.lang.String">
+    select path from book where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from book
+  </select>
+
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select * from book where user_id = #{userId, jdbcType=INTEGER}
+  </select>
+
+  <!--根据列名获取某级分类, 不使用预编译-->
+  <select id="getClassifyList" parameterType="java.lang.String" resultType="java.lang.String" statementType="STATEMENT">
+    select distinct classify from book
+  </select>
+
+  <!--查找以文件名结尾的文件数量 使用'%${name}'不是占位符，会有sql注入的隐患-->
+  <select id="selectBookNumByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(id) from book
+    where path like concat('%', #{name, jdbcType=VARCHAR})
+  </select>
+
+  <select id="getPagingList" resultMap="BaseResultMap" parameterType="com.angeya.bs.model.PagingBookParam">
+    select * from book
+    <where>
+      <if test="classify != null">
+        classify = #{classify, jdbcType=VARCHAR}
+      </if>
+      <if test="userId != null">
+        user_id = #{userId, jdbcType=INTEGER}
+      </if>
+    </where>
+    order by id asc
+    limit #{startIndex}, #{pageSize}
+
+  </select>
+
+  <select id="getTotalNum" parameterType="com.angeya.bs.model.PagingBookParam" resultType="java.lang.Integer">
+    select count(id) from book
+    <where>
+      <if test="classify != null">
+        classify = #{classify, jdbcType=VARCHAR}
+      </if>
+      <if test="userId != null">
+        user_id = #{userId, jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+</mapper>

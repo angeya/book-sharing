@@ -1,0 +1,53 @@
+server:
+  port: 8084
+
+spring:
+  profiles:
+    active: pro
+
+  datasource:
+    ip: 127.0.0.1
+    dbname: book_sharing
+    url: jdbc:mysql://${spring.datasource.ip}/${spring.datasource.dbname}?useUnicode=true&serverTimezone=GMT%2B8&characterEncoding=utf8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver # 数据库驱动类不写，springboot会自动尝试匹配驱动类
+    # 数据库连接池配置
+    tomcat:
+      max-idle: 10 # 数据库连接池最大等待连接数量 0代表不限制
+      max-active: 50 # 最大连接活动数
+      max-wait: 10000 # 最大等待时间 毫秒
+      initial-size: 2 # 数据库连接池初始化连接数
+  servlet:
+    multipart:
+      enabled: true #是否启用springMVC multipart(http请求中将文件分为多个部分)上传功能
+      file-size-threshold: 0 #＃将文件写入磁盘的阀值 值可以使用后缀MB或KB来表示兆字节或字节大小
+      max-file-size: 500MB #单个文件进最大值
+      max-request-size: 1000MB #所有文件最大值
+      # location: D:/tmp/books/ # 文件保存路径,该目录在tomcat下
+  mail:
+    protocol: smtp # smtp的25端口阿里云默认屏蔽
+    host: smtp.163.com
+    port: 465
+    username: sunnyajie@163.com
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            enable: true
+            socketFactory:
+              port: 465
+              class: javax.net.ssl.SSLSocketFactory
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  file:
+    basepath: D:/tmp/books/ # 需要加目录结尾符号

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.angeya.bs.mapper.OperateLogMapper">
+  <resultMap id="BaseResultMap" type="com.angeya.bs.model.OperateLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="operate" jdbcType="TINYINT" property="operate" />
+    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+  </resultMap>
+
+  <insert id="insertSelective" parameterType="com.angeya.bs.model.OperateLog">
+    insert into operate_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="operate != null">
+        operate,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="operate != null">
+        #{operate,jdbcType=TINYINT},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null">
+        createDate,
+      </if>
+    </trim>
+  </insert>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, user_id, operate, file_path, date
+    from operate_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, operate, file_path, date
+    from operate_log
+  </select>
+</mapper>
